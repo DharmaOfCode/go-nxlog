@@ -4,5 +4,5 @@ This is a simple tool that helps security admins in speeding up the installation
 ### Usage Examples
 Setup nxlog and set the endpoint to 127.0.0.1 (verbose output):
 ```
-gonxlog.exe -E 127.0.0.1 -v
+go-nxlog.exe -E 127.0.0.1 -v
 ```
