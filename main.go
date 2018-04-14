@@ -34,7 +34,7 @@ func ParseCmdLine() *State {
 	s := State{}
 
 	flag.BoolVar(&s.Verbose, "v", false, "Verbose output")
-	flag.StringVar(&s.Endpoint, "U", "", "Endpoint IP address")
+	flag.StringVar(&s.Endpoint, "E", "", "Endpoint IP address")
 
 	flag.Parse()
 
@@ -233,7 +233,9 @@ func DownloadFile(filepath string, url string, s *State) error {
 }
 
 func Ruler(s *State) {
-	fmt.Println("==============================================================")
+	if s.Verbose{
+		fmt.Println("==============================================================")
+	}
 }
 
 func Banner(state *State) {
