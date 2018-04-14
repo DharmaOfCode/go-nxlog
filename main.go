@@ -19,7 +19,6 @@ import (
 const ConfigFilePath = "C:\\Program Files (x86)\\nxlog\\conf\\nxlog.conf"
 const ConfigFileUrl = "https://www.alienvault.com/documentation/resources/downloads/nxlog.conf"
 const NXlogURL = "https://nxlog.co/system/files/products/files/348/"
-const NXlogDefault = "nxlog-ce-2.9.1716.msi"
 
 type WriteCounter struct {
 	Total uint64
@@ -28,17 +27,32 @@ type WriteCounter struct {
 type State struct {
 	Verbose       bool
 	Endpoint	  string
+	NXLogFile     string
 }
 
 func ParseCmdLine() *State {
+	valid := true
+
 	s := State{}
 
 	flag.BoolVar(&s.Verbose, "v", false, "Verbose output")
 	flag.StringVar(&s.Endpoint, "E", "", "Endpoint IP address")
+	flag.StringVar(&s.NXLogFile, "f", "nxlog-ce-2.9.1716.msi", "The file name to download.")
 
 	flag.Parse()
 
 	Banner(&s)
+
+	if s.Endpoint == "" {
+		fmt.Println("[!] You must provide an endpoint")
+		valid = false
+	}
+
+	if valid {
+		return &s
+	} else {
+		Ruler(&s)
+	}
 
 	return nil
 }
@@ -49,7 +63,7 @@ func Process(s *State){
 		fmt.Println("Download of nxlog Started")
 	}
 
-	err := DownloadFile(NXlogDefault, NXlogURL + NXlogDefault, s)
+	err := DownloadFile(s.NXLogFile, NXlogURL + s.NXLogFile, s)
 	if err != nil {
 		panic(err)
 	}
@@ -172,7 +186,7 @@ func InstallNxLog(s *State) error {
 	if s.Verbose{
 		fmt.Println("Installing nxlog")
 	}
-	_, err := exec.Command("msiexec", "/i", NXlogDefault, "/quiet").
+	_, err := exec.Command("msiexec", "/i", s.NXLogFile, "/quiet").
 		Output()
 
 	return err
